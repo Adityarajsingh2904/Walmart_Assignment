@@ -28,9 +28,11 @@ function severityClasses(severity: Incident['severity']): string {
 export default function IncidentCard({
   incident,
   onClick,
+  children,
 }: {
   incident: Incident;
   onClick?: () => void;
+  children?: React.ReactNode;
 }): JSX.Element {
   const title = incident.title || 'Untitled incident';
   let timeText = '—';
@@ -58,6 +60,7 @@ export default function IncidentCard({
         <Clock size={16} className="inline-block mr-1" />
         {timeText}
       </p>
+      {children}
     </Card>
   );
 }
