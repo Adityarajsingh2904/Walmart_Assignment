@@ -1,0 +1,63 @@
+{
+  "uid": "trustvault-main",
+  "title": "TrustVault Main",
+  "tags": ["trustvault"],
+  "timezone": "browser",
+  "schemaVersion": 37,
+  "version": 1,
+  "panels": [
+    {
+      "type": "gauge",
+      "title": "CPU Utilization",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{container!='',pod=~'$service.*'}[5m])) by (pod) * 100",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "max": 100
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNonNull"],
+          "values": false,
+          "fields": "" 
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "type": "heatmap",
+      "title": "Memory Usage (24h)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{container!='',pod=~'$service.*'}",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "legend": {"show": true}
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "timeFrom": "24h"
+    },
+    {
+      "type": "timeseries",
+      "title": "Alert Count",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(increase(postgres_alerts_total[5m]))",
+          "refId": "C"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+    }
+  ]
+}
