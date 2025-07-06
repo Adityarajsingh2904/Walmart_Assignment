@@ -1,2 +1,3 @@
 packages:
   - soar-service
+  - ledger-service

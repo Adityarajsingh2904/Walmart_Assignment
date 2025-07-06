@@ -4,3 +4,5 @@ __pycache__
 
 models/
 iam-service/coverage
+ledger-service/coverage
+ledger-service/dist
