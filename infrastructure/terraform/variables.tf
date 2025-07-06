@@ -39,3 +39,26 @@ variable "project_tag" {
   type        = string
   default     = "trustvault"
 }
+
+variable "domain_name" {
+  description = "Domain name for the website"
+  type        = string
+}
+
+variable "certificate_arn" {
+  description = "ACM certificate ARN in us-east-1"
+  type        = string
+}
+
+variable "create_route53" {
+  description = "Create Route53 alias record"
+  type        = bool
+  default     = false
+}
+
+variable "route53_zone_id" {
+  description = "Route53 hosted zone ID"
+  type        = string
+  default     = null
+}
+
