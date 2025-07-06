@@ -1,6 +1,7 @@
 import express from 'express';
 import { collectDefaultMetrics, register } from 'prom-client';
 import config from './config';
+export { runPlaybook } from './engine';
 
 collectDefaultMetrics();
 
