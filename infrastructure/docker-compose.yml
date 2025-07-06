@@ -106,6 +106,8 @@ services:
     build: ../services/grafana
     ports:
       - "${GRAFANA_PORT}:3000"
+    volumes:
+      - ../scripts/grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
     restart: unless-stopped
