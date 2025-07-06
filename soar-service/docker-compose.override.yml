@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  kafka:
+    image: docker.redpanda.com/redpanda/redpanda:latest
+    command: >-
+      redpanda start --overprovisioned --smp 1 --memory 1G --check=false \
+      --kafka-addr PLAINTEXT://0.0.0.0:9092 \
+      --advertise-kafka-addr PLAINTEXT://kafka:9092
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9644/v1/status/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  soar-service:
+    build: .
+    env_file: .env.example
+    ports:
+      - "8003:8003"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
