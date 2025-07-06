@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = False
+        extra = "ignore"
 
     def __repr__(self) -> str:  # pragma: no cover - simple utility
         data = self.model_dump()
