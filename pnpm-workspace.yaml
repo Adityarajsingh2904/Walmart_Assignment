@@ -1,3 +1,4 @@
 packages:
   - soar-service
   - ledger-service
+  - api-gateway
