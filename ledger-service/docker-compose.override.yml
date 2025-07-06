@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  fabric-devnet:
+    image: hyperledger/fabric-peer:2.5
+    command: bash -c "sleep infinity"
+  ledger-service:
+    build: .
+    env_file: .env.example
+    ports:
+      - "8085:8085"
+    depends_on:
+      - fabric-devnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
