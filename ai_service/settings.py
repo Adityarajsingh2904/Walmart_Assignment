@@ -1,15 +1,42 @@
-from pydantic import Field
+from __future__ import annotations
+
 from pydantic_settings import BaseSettings
-from typing import Optional
+
 
 class Settings(BaseSettings):
-    KAFKA_BOOTSTRAP_SERVERS: str = Field(..., env="KAFKA_BOOTSTRAP_SERVERS")
-    KAFKA_USERNAME: Optional[str] = Field(None, env="KAFKA_USERNAME")
-    KAFKA_PASSWORD: Optional[str] = Field(None, env="KAFKA_PASSWORD")
-    KAFKA_SECURITY_PROTOCOL: str = Field("PLAINTEXT", env="KAFKA_SECURITY_PROTOCOL")
-    KAFKA_SASL_MECHANISM: Optional[str] = Field(None, env="KAFKA_SASL_MECHANISM")
-    KAFKA_SSL_CAFILE: Optional[str] = Field(None, env="KAFKA_SSL_CAFILE")
-    ENVIRONMENT: str = Field("dev", env="ENVIRONMENT")
+    """Application configuration loaded from environment or .env."""
+
+    # Kafka
+    KAFKA_BOOTSTRAP_SERVERS: str
+    KAFKA_SASL_USERNAME: str | None = None
+    KAFKA_SASL_PASSWORD: str | None = None
+    KAFKA_SSL_CA: str | None = None   # path to CA file
+
+    # Postgres
+    PG_HOST: str
+    PG_PORT: int = 5432
+    PG_DB: str
+    PG_USER: str
+    PG_PASS: str
+
+    # OpenAI / models
+    OPENAI_API_KEY: str
+    MODEL_DIR: str = "models/"
+
+    LOG_LEVEL: str = "INFO"
 
     class Config:
+        env_file = ".env"
         case_sensitive = False
+
+    def __repr__(self) -> str:  # pragma: no cover - simple utility
+        data = self.model_dump()
+        for field in {"KAFKA_SASL_PASSWORD", "PG_PASS", "OPENAI_API_KEY"}:
+            if field in data and data[field] is not None:
+                data[field] = "***"
+        items = ", ".join(f"{k}={v!r}" for k, v in data.items())
+        return f"Settings({items})"
+
+
+# module level singleton
+settings = Settings.model_validate({})
