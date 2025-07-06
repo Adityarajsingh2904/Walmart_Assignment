@@ -1,12 +1,5 @@
 module.exports = {
-  env: {
-    node: true,
-    es2020: true,
-    jest: true
-  },
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+  extends: ['../.eslintrc.cjs', 'plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
-  parserOptions: { ecmaVersion: 11, sourceType: 'module' },
-  plugins: ['@typescript-eslint'],
-  rules: {}
-};
+  parserOptions: { sourceType: 'module' }
+}

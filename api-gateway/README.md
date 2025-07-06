@@ -1,18 +1,12 @@
 # API Gateway
 
-This package exposes a single REST and WebSocket endpoint in front of TrustVault services.
+Simple Express API Gateway with a health check endpoint.
 
 ## Development
 
 ```bash
-pnpm install
-docker compose up -f docker-compose.override.yml --build
+npm install
+npm run dev
 ```
 
-Curl health check:
-
-```bash
-curl http://localhost:8080/health
-```
-
-Swagger UI is available at `http://localhost:8080/docs`.
+Visit `http://localhost:8000/healthz`.
