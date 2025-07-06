@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { createApp } from '../src/index'
+import { createApp } from '../src/server'
 import { describe, it, expect } from 'vitest'
 import SwaggerParser from '@apidevtools/swagger-parser'
 
