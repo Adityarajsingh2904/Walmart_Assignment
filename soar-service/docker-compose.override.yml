@@ -19,12 +19,12 @@ services:
     build: .
     env_file: .env.example
     ports:
-      - "8003:8003"
+      - "8083:8083"
     depends_on:
       kafka:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8003/healthz"]
+      test: ["CMD", "curl", "-f", "http://localhost:8083/health"]
       interval: 10s
       timeout: 5s
       retries: 5

@@ -1,16 +1,10 @@
-# builder
-FROM node:20-slim AS builder
+FROM node:20-alpine
 WORKDIR /app
-COPY package.json pnpm-lock.yaml tsconfig.json jest.config.cjs .eslintrc.cjs ./
+COPY package.json pnpm-lock.yaml tsconfig.json ./
+RUN corepack enable && pnpm install --prod --frozen-lockfile
 COPY src ./src
-RUN npm install -g pnpm && pnpm install --frozen-lockfile && pnpm run build
-
-# runtime
-FROM gcr.io/distroless/nodejs20-debian11
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-COPY package.json pnpm-lock.yaml ./
 ENV NODE_ENV=production
-EXPOSE 8003
-HEALTHCHECK CMD curl -f http://localhost:${METRICS_PORT:-8003}/healthz || exit 1
-CMD ["node", "dist/index.js"]
+EXPOSE 8083
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD wget -qO- http://localhost:${PORT}/health || exit 1
+CMD ["node", "--loader", "ts-node/esm", "src/index.ts"]
