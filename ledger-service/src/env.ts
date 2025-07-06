@@ -8,6 +8,7 @@ export interface Env {
   CHANNEL_NAME: string
   CONTRACT_NAME: string
   PORT: number
+  METRICS_PORT: number
   LOG_LEVEL: string
 }
 
@@ -17,7 +18,8 @@ const env: Env = {
   FABRIC_IDENTITY: process.env.FABRIC_IDENTITY || 'appUser',
   CHANNEL_NAME: process.env.CHANNEL_NAME || 'trustvault',
   CONTRACT_NAME: process.env.CONTRACT_NAME || 'ledger',
-  PORT: Number(process.env.PORT) || 8085,
+  PORT: Number(process.env.PORT) || 8084,
+  METRICS_PORT: Number(process.env.METRICS_PORT) || 8003,
   LOG_LEVEL: process.env.LOG_LEVEL || 'info'
 }
 

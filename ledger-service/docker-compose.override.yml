@@ -7,11 +7,11 @@ services:
     build: .
     env_file: .env.example
     ports:
-      - "8085:8085"
+      - "8084:8084"
     depends_on:
       - fabric-devnet
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8085/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8084/health"]
       interval: 10s
       timeout: 5s
       retries: 5
