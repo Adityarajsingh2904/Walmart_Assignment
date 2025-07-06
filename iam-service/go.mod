@@ -1,8 +1,6 @@
 module github.com/example/iam-service
 
-go 1.23.0
-
-toolchain go1.23.8
+go 1.24
 
 require (
 	github.com/IBM/sarama v1.45.2
