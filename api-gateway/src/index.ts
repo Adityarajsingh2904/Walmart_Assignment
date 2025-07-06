@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express'
 import openapiSpec from './lib/openapi'
 import pool from './lib/db'
 import openaiUsage from './middleware/openaiUsage'
+import { metricsRouter, trackRoute } from './middleware/metrics'
 import exampleRoutes from './routes/example'
 import alertsRoutes from './routes/alerts'
 import sessionsRoutes from './routes/sessions'
@@ -16,6 +17,7 @@ dotenv.config()
 export function createApp() {
   const app = express()
   app.use(openaiUsage(pool))
+  app.use(metricsRouter)
   app.use(exampleRoutes)
   app.use(alertsRoutes)
   app.use(sessionsRoutes)
@@ -24,7 +26,7 @@ export function createApp() {
   app.use(ledgerRoutes)
   app.get('/docs-json', (_req, res) => res.json(openapiSpec))
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec))
-  app.get('/healthz', (_req, res) => {
+  app.get('/healthz', trackRoute('healthz'), (_req, res) => {
     res.json({ status: 'ok' })
   })
   return app
