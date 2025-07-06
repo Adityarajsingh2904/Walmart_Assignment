@@ -3,7 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "prepare": "husky install"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "devDependencies": {
     "husky": "^8.0.0"
