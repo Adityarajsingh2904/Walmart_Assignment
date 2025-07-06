@@ -3,6 +3,12 @@ variable "aws_region" {
   type        = string
 }
 
+variable "openai_key" {
+  description = "OpenAI API key"
+  type        = string
+  sensitive   = true
+}
+
 variable "db_username" {
   description = "Database master username"
   type        = string
@@ -16,6 +22,11 @@ variable "db_password" {
     condition     = length(var.db_password) >= 8
     error_message = "db_password must be at least 8 characters"
   }
+}
+
+variable "ec2_role_name" {
+  description = "IAM role attached to the EC2 instance"
+  type        = string
 }
 
 variable "vpc_id" {
