@@ -1,1 +1,1 @@
-// TODO: implement emitters
+export * from './kafkaEmitter';

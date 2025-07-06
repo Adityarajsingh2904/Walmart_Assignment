@@ -5,6 +5,8 @@ load();
 
 const envSchema = z.object({
   KAFKA_BROKERS: z.string().default('localhost:9092'),
+  KAFKA_CLIENT_ID: z.string().default('soar-service'),
+  KAFKA_TRANSACTION_TIMEOUT: z.string().optional(),
   SLACK_TOKEN: z.string().optional(),
   AWS_REGION: z.string().default('us-east-1'),
   AWS_SNS_TOPIC: z.string().optional(),
