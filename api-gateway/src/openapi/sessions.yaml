@@ -12,9 +12,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: './components.yaml#/components/schemas/Resource'
+                $ref: './components.yaml#/components/schemas/SessionsResponse'
     post:
       summary: Create session
       tags:
@@ -24,7 +22,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml#/components/schemas/Resource'
+              $ref: './components.yaml#/components/schemas/Session'
       responses:
         '201':
           description: Created
@@ -46,4 +44,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml#/components/schemas/Resource'
+                $ref: './components.yaml#/components/schemas/Session'

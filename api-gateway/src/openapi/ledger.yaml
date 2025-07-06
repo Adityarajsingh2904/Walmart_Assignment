@@ -14,7 +14,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './components.yaml#/components/schemas/Resource'
+                  $ref: './components.yaml#/components/schemas/LedgerEntry'
     post:
       summary: Create ledger entry
       tags:
@@ -24,7 +24,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml#/components/schemas/Resource'
+              $ref: './components.yaml#/components/schemas/LedgerEntry'
       responses:
         '201':
           description: Created
@@ -46,4 +46,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml#/components/schemas/Resource'
+                $ref: './components.yaml#/components/schemas/LedgerEntry'
