@@ -1,9 +1,8 @@
 import asyncio
 import json
 import logging
-import os
 import signal
-from typing import Dict, Any, Optional, Tuple
+from typing import Any, Tuple
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer, TopicPartition, OffsetAndMetadata
 from aiokafka.errors import KafkaError
