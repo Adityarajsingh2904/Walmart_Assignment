@@ -1,0 +1,74 @@
+{
+  "$id": "https://example.com/schema/playbook.v1.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "version": { "type": "string" },
+    "id": { "type": "string", "format": "uuid" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "triggers": { "$ref": "#/$defs/triggers" },
+    "steps": { "type": "array", "items": { "$ref": "#/$defs/step" } }
+  },
+  "required": ["version", "id", "name", "description", "triggers", "steps"],
+  "unevaluatedProperties": true,
+  "$defs": {
+    "triggers": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "class": { "type": "string" },
+        "severity": {
+          "type": "array",
+          "items": { "enum": ["low", "medium", "high"] }
+        }
+      },
+      "required": ["class", "severity"],
+      "unevaluatedProperties": true
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "host": { "type": "string" },
+        "user": { "type": "string" },
+        "channel": { "type": "string" },
+        "target": { "type": "string" },
+        "message": { "type": "string" }
+      },
+      "discriminator": { "propertyName": "type" },
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "const": "isolate_host" },
+            "host": { "type": "string" }
+          },
+          "required": ["host"]
+        },
+        {
+          "properties": {
+            "type": { "const": "reset_password" },
+            "host": { "type": "string" },
+            "user": { "type": "string" }
+          },
+          "required": ["host", "user"]
+        },
+        {
+          "properties": {
+            "type": { "const": "notify" },
+            "channel": { "type": "string" },
+            "target": { "type": "string" },
+            "message": { "type": "string" }
+          },
+          "required": ["channel", "target", "message"]
+        }
+      ],
+      "unevaluatedProperties": true
+    }
+  }
+}
