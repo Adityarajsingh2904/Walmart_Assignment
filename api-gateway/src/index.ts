@@ -18,10 +18,15 @@ export function createApp() {
 }
 
 /* c8 ignore start */
+import http from 'http'
+import { initSocket } from './lib/socket'
+
 if (require.main === module) {
   const port = Number(process.env.PORT) || 8000
   const app = createApp()
-  app.listen(port, () => {
+  const server = http.createServer(app)
+  initSocket(server)
+  server.listen(port, () => {
     console.log(`API Gateway listening on ${port}`)
   })
 }
