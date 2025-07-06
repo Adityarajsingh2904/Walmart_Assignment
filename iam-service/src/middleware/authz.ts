@@ -77,6 +77,7 @@ export async function authzMiddleware(req: Request, res: Response, next: NextFun
   let payload: any;
   try {
     payload = await jwt.verify(auth.slice(7));
+    (req as any).user = payload;
   } catch (e) {
     authzDenied.inc({ reason: 'jwt_invalid' });
     return res.status(403).json({ error: 'Forbidden', reason: 'jwt_invalid' });
