@@ -10,6 +10,8 @@
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "devDependencies": {
+    "cypress": "12.17.4",
+    "cypress-axe": "^1.6.0",
     "husky": "^8.0.0"
   }
 }
