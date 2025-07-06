@@ -1,0 +1,49 @@
+tags:
+  - name: Soar
+paths:
+  /soar:
+    get:
+      summary: List soar records
+      tags:
+        - Soar
+      responses:
+        '200':
+          description: List of soar records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml#/components/schemas/Resource'
+    post:
+      summary: Create soar record
+      tags:
+        - Soar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml#/components/schemas/Resource'
+      responses:
+        '201':
+          description: Created
+  /soar/{id}:
+    get:
+      summary: Get soar record by id
+      tags:
+        - Soar
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Soar record details
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml#/components/schemas/Resource'
