@@ -6,7 +6,7 @@ import time
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Deque, Dict, List
+from typing import Deque, Dict
 
 import joblib
 import numpy as np
