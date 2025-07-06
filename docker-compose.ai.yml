@@ -1,0 +1,78 @@
+version: '3.9'
+
+x-healthcheck: &hc-common
+  interval: 10s
+  timeout: 5s
+  retries: 5
+  start_period: 10s
+
+services:
+  kafka:
+    image: docker.redpanda.com/redpanda/redpanda:latest
+    command: >-
+      redpanda start
+      --overprovisioned
+      --smp 1
+      --memory 1G
+      --check=false
+      --kafka-addr PLAINTEXT://0.0.0.0:9092
+      --advertise-kafka-addr PLAINTEXT://kafka:9092
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsSL", "http://localhost:9644/v1/status/ready"]
+      <<: *hc-common
+    env_file: .env
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:13-alpine
+    env_file: .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+      <<: *hc-common
+    restart: unless-stopped
+
+  ai-service:
+    build: ./ai-service
+    env_file: .env
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./ai-service/models:/app/models
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsSL", "http://localhost:8001/metrics"]
+      <<: *hc-common
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    command: ["--config.file=/etc/prometheus/prometheus.yml"]
+    env_file: .env
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      ai-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/ready"]
+      <<: *hc-common
+    restart: unless-stopped
+
+volumes:
+  redpanda_data:
+  postgres_data:
