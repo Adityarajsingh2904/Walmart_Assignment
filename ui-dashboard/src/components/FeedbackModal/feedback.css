@@ -1,0 +1,7 @@
+/* Styles for FeedbackModal.
+   Provide modal sizing and responsive textarea behaviour. */
+
+.feedback-modal textarea {
+  min-height: 4rem;
+  width: 100%;
+}
