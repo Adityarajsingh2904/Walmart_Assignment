@@ -1,0 +1,8 @@
+asyncpg~=0.30
+fastapi~=0.115
+passlib[bcrypt]~=1.7
+prometheus-client~=0.22
+pyjwt~=2.10
+python-dotenv~=1.1
+structlog~=25.4
+uvicorn[standard]~=0.35
