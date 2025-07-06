@@ -8,12 +8,12 @@ class FabricClient {
   private contract: Contract | undefined
 
   async logEvent(event: SoarActionEvent): Promise<void> {
-    logger.info('logEvent', { event })
+    logger.info({ event }, 'logEvent')
     // placeholder for chaincode invoke
   }
 
   async verify(runId: string): Promise<boolean> {
-    logger.info('verify', { runId })
+    logger.info({ runId }, 'verify')
     return true
   }
 
