@@ -1,0 +1,99 @@
+# File: /scripts/prometheus/prometheus.yml
+global:
+  scrape_interval: 30s
+
+scrape_configs:
+  - job_name: api-gateway
+    # Kubernetes service discovery
+    kubernetes_sd_configs:
+      - role: endpoints
+    # EC2 file-based discovery
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/file_sd/api-gateway.yml
+        refresh_interval: 1m
+    static_configs:
+      - targets: ['api-gateway:9100']
+    relabel_configs:
+      - source_labels: [internal]
+        regex: "true"
+        action: drop
+    basic_auth:
+      username: ${PROM_AUTH_USER}
+      password: ${PROM_AUTH_PASS}
+
+  - job_name: ai-service
+    kubernetes_sd_configs:
+      - role: endpoints
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/file_sd/ai-service.yml
+        refresh_interval: 1m
+    static_configs:
+      - targets: ['ai-service:8000']
+    relabel_configs:
+      - source_labels: [internal]
+        regex: "true"
+        action: drop
+    basic_auth:
+      username: ${PROM_AUTH_USER}
+      password: ${PROM_AUTH_PASS}
+
+  - job_name: soar-service
+    kubernetes_sd_configs:
+      - role: endpoints
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/file_sd/soar-service.yml
+        refresh_interval: 1m
+    static_configs:
+      - targets: ['soar-service:9100']
+    relabel_configs:
+      - source_labels: [internal]
+        regex: "true"
+        action: drop
+    basic_auth:
+      username: ${PROM_AUTH_USER}
+      password: ${PROM_AUTH_PASS}
+
+  - job_name: iam-service
+    kubernetes_sd_configs:
+      - role: endpoints
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/file_sd/iam-service.yml
+        refresh_interval: 1m
+    static_configs:
+      - targets: ['iam-service:7000']
+    relabel_configs:
+      - source_labels: [internal]
+        regex: "true"
+        action: drop
+    basic_auth:
+      username: ${PROM_AUTH_USER}
+      password: ${PROM_AUTH_PASS}
+
+  - job_name: fabric-peer
+    kubernetes_sd_configs:
+      - role: endpoints
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/file_sd/fabric-peer.yml
+        refresh_interval: 1m
+    static_configs:
+      - targets: ['fabric-peer:9300']
+    relabel_configs:
+      - source_labels: [internal]
+        regex: "true"
+        action: drop
+    basic_auth:
+      username: ${PROM_AUTH_USER}
+      password: ${PROM_AUTH_PASS}
+
+# Terraform remote-exec snippet to upload and reload configuration
+# provisioner "remote-exec" {
+#   inline = [
+#     "aws s3 cp prometheus.yml /etc/prometheus/",
+#     "curl -X POST http://localhost:9090/-/reload",
+#   ]
+# }
