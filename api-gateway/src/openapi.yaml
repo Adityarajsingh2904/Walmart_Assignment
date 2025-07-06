@@ -1,0 +1,27 @@
+openapi: 3.1.0
+info:
+  title: TrustVault API Gateway
+  version: '0.0.0'
+paths:
+  /alerts:
+    $ref: 'openapi/alerts.yaml#/paths/~1alerts'
+  /alerts/{id}:
+    $ref: 'openapi/alerts.yaml#/paths/~1alerts~1{id}'
+  /sessions:
+    $ref: 'openapi/sessions.yaml#/paths/~1sessions'
+  /sessions/{id}:
+    $ref: 'openapi/sessions.yaml#/paths/~1sessions~1{id}'
+  /users:
+    $ref: 'openapi/users.yaml#/paths/~1users'
+  /users/{id}:
+    $ref: 'openapi/users.yaml#/paths/~1users~1{id}'
+  /soar:
+    $ref: 'openapi/soar.yaml#/paths/~1soar'
+  /soar/{id}:
+    $ref: 'openapi/soar.yaml#/paths/~1soar~1{id}'
+  /ledger:
+    $ref: 'openapi/ledger.yaml#/paths/~1ledger'
+  /ledger/{id}:
+    $ref: 'openapi/ledger.yaml#/paths/~1ledger~1{id}'
+components:
+  $ref: 'openapi/components.yaml#/components'

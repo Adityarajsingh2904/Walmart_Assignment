@@ -1,13 +1,10 @@
 import swaggerJsdoc from 'swagger-jsdoc'
+import SwaggerParser from '@apidevtools/swagger-parser'
+
+const baseSpec = (await SwaggerParser.dereference('src/openapi.yaml')) as any
 
 const options = {
-  definition: {
-    openapi: '3.1.0',
-    info: {
-      title: process.env.NPM_PACKAGE_NAME ?? 'TrustVault API Gateway',
-      version: process.env.NPM_PACKAGE_VERSION ?? '0.0.0',
-    },
-  },
+  definition: baseSpec,
   apis: ['src/routes/**/*.ts'],
 }
 

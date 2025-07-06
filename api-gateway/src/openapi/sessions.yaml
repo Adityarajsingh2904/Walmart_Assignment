@@ -1,0 +1,49 @@
+tags:
+  - name: Sessions
+paths:
+  /sessions:
+    get:
+      summary: List sessions
+      tags:
+        - Sessions
+      responses:
+        '200':
+          description: List of sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml#/components/schemas/Resource'
+    post:
+      summary: Create session
+      tags:
+        - Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml#/components/schemas/Resource'
+      responses:
+        '201':
+          description: Created
+  /sessions/{id}:
+    get:
+      summary: Get session by id
+      tags:
+        - Sessions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml#/components/schemas/Resource'

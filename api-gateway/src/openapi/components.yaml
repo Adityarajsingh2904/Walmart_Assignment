@@ -1,0 +1,8 @@
+components:
+  schemas:
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
