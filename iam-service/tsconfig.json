@@ -7,7 +7,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "baseUrl": "./",
+    "paths": {
+      "@trustvault/jwt": ["src/lib/jwt"]
+    },
+    "typeRoots": ["./src", "./node_modules/@types"]
   },
   "include": ["src/**/*", "tests/**/*"]
 }
