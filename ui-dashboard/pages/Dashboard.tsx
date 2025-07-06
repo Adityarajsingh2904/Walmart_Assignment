@@ -4,14 +4,8 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { Card, Grid, Badge } from 'shadcn/ui';
-import {
-  ResponsiveContainer,
-  HeatMap,
-  RadialGauge,
-  XAxis,
-  Tooltip,
-  YAxis,
-} from 'recharts';
+import { ResponsiveContainer, RadialGauge } from 'recharts';
+import SeverityHeatmap from '../components/SeverityHeatmap';
 import {
   eachDayOfInterval,
   format,
@@ -90,21 +84,6 @@ function IncidentCardsGrid({
   );
 }
 
-function SeverityHeatmap({
-  data,
-}: {
-  data: { date: string; count: number }[];
-}) {
-  return (
-    <ResponsiveContainer width="100%" height={200}>
-      <HeatMap data={data} dataKey="count">
-        <XAxis dataKey="date" />
-        <YAxis type="category" dataKey="date" hide />
-        <Tooltip />
-      </HeatMap>
-    </ResponsiveContainer>
-  );
-}
 
 function SystemGauges({ metrics }: { metrics: Metrics }) {
   return (
