@@ -62,3 +62,12 @@ variable "route53_zone_id" {
   default     = null
 }
 
+variable "instance_id" {
+  description = "Existing EC2 instance ID"
+  type        = string
+}
+
+variable "alert_email" {
+  description = "Email for SNS subscription"
+  type        = string
+}
