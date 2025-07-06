@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import http from 'http'
 import { io as Client } from 'socket.io-client'
-import { createApp } from '../src/index'
+import { createApp } from '../src/server'
 import { initSocket, io } from '../src/lib/socket'
 
 let server: http.Server

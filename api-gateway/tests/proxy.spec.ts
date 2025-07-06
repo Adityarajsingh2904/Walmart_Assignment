@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import jwt from 'jsonwebtoken'
-let createApp: typeof import('../src/index').createApp
+let createApp: typeof import('../src/server').createApp
 
 const server = setupServer()
 
@@ -14,7 +14,7 @@ afterEach(() => server.resetHandlers())
 
 async function makeApp() {
   vi.resetModules()
-  const mod = await import('../src/index')
+  const mod = await import('../src/server')
   createApp = mod.createApp
   return createApp()
 }
