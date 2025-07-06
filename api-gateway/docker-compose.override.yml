@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  api-gateway:
+    build: .
+    environment:
+      - PORT=8080
+      - JWT_SECRET=${JWT_SECRET}
+      - ALERTS_URL=http://alerts:8081
+      - IAM_URL=http://iam:8000
+      - SOAR_URL=http://soar-service:8083
+      - LEDGER_URL=http://ledger-service:8084
+      - SOCKET_CORS_ORIGINS=https://app.trustvault.io,https://console.trustvault.io
+      - METRICS_PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - alerts
+      - iam
+      - soar-service
+      - ledger-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

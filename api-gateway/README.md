@@ -10,4 +10,17 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:8000/healthz`.
+Visit `http://localhost:8080/healthz`.
+
+## Production
+
+```bash
+npm run build
+npm start
+```
+
+To run with Docker:
+
+```bash
+docker compose -f api-gateway/docker-compose.override.yml up --build
+```
