@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  node-api:
+    build: ../services/node-api
+    environment:
+      - PORT=${NODE_API_PORT}
+    ports:
+      - "${NODE_API_PORT}:4000"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - kafka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${NODE_API_PORT}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  ai-service:
+    build: ../services/ai-service
+    environment:
+      - PORT=${AI_SERVICE_PORT}
+    ports:
+      - "${AI_SERVICE_PORT}:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${AI_SERVICE_PORT}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "${ZOOKEEPER_PORT}:2181"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo ruok | nc localhost 2181 | grep imok"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  kafka:
+    build: ../services/kafka
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:${KAFKA_PORT}
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    ports:
+      - "${KAFKA_PORT}:9092"
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  postgres:
+    build: ../services/postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  fabric-peer:
+    build: ../services/fabric-peer
+    environment:
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:${FABRIC_PEER_PORT}
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+    ports:
+      - "${FABRIC_PEER_PORT}:7051"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "peer node status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  prometheus:
+    build: ../services/prometheus
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  grafana:
+    build: ../services/grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
