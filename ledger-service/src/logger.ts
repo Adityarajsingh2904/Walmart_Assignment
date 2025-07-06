@@ -1,11 +1,10 @@
-import winston from 'winston'
+import pino from 'pino'
 import env from './env'
 
-const logger = winston.createLogger({
+const logger = pino({
   level: env.LOG_LEVEL,
-  format: winston.format.json(),
-  defaultMeta: { service: 'ledger-service' },
-  transports: [new winston.transports.Console()]
+  base: { service: 'ledger-service' },
+  timestamp: pino.stdTimeFunctions.isoTime
 })
 
 export default logger

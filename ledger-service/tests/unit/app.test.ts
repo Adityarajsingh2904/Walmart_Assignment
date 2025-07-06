@@ -1,35 +1,44 @@
 import request from 'supertest'
-import app from '../../src'
-import client from '../../src/client'
+import app from '../../src/server'
+import { logEvent, verifyIntegrity, exportCsv } from '../../src/fabricClient'
 
-jest.mock('../../src/client')
+jest.mock('../../src/fabricClient')
 
 describe('routes', () => {
   it('logs event', async () => {
-    const mock = client as jest.Mocked<typeof client>
-    mock.logEvent.mockResolvedValueOnce()
+    const mockLog = logEvent as jest.MockedFunction<typeof logEvent>
+    mockLog.mockResolvedValueOnce('tx')
     const res = await request(app)
-      .post('/log-event')
-      .send({ runId: '1', action: 'test', message: 'ok', timestamp: 'now' })
+      .post('/ledger/log-event')
+      .send({
+        id: 'evt',
+        runId: '11111111-1111-1111-1111-111111111111',
+        playbookId: '22222222-2222-2222-2222-222222222222',
+        stepId: 'isolate',
+        action: 'isolate_host',
+        status: 'success',
+        timestamp: '2025-07-06T12:00:00.000Z'
+      })
     expect(res.status).toBe(201)
-    expect(mock.logEvent).toHaveBeenCalled()
+    expect(mockLog).toHaveBeenCalled()
   })
 
   it('verifies run', async () => {
-    const mock = client as jest.Mocked<typeof client>
-    mock.verify.mockResolvedValueOnce(true)
-    const res = await request(app).get('/verify/1')
+    const mockVerify = verifyIntegrity as jest.MockedFunction<typeof verifyIntegrity>
+    mockVerify.mockResolvedValueOnce({ valid: true, ledgerHash: 'a', providedHash: 'a' })
+    const res = await request(app).get('/ledger/verify/key?hash=a')
     expect(res.status).toBe(200)
-    expect(res.body).toEqual({ runId: '1', verified: true })
-    expect(mock.verify).toHaveBeenCalledWith('1')
+    expect(res.body).toEqual({ key: 'key', valid: true, ledgerHash: 'a', providedHash: 'a' })
+    expect(mockVerify).toHaveBeenCalledWith('key', 'a')
   })
 
   it('exports csv', async () => {
-    const mock = client as jest.Mocked<typeof client>
-    mock.getEvents.mockResolvedValueOnce([{ runId: '1', action: 'a', message: 'm', timestamp: 't' }])
-    const res = await request(app).get('/export/csv')
+    const mockExport = exportCsv as jest.MockedFunction<typeof exportCsv>
+    const { Readable } = require('stream')
+    mockExport.mockResolvedValueOnce(Readable.from(['a,b']))
+    const res = await request(app).get('/ledger/export.csv')
     expect(res.status).toBe(200)
-    expect(res.text).toContain('runId')
-    expect(mock.getEvents).toHaveBeenCalled()
+    expect(res.text).toContain('a,b')
+    expect(mockExport).toHaveBeenCalled()
   })
 })
