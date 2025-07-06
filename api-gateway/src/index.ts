@@ -2,6 +2,8 @@ import express from 'express'
 import dotenv from 'dotenv'
 import swaggerUi from 'swagger-ui-express'
 import openapiSpec from './lib/openapi'
+import pool from './lib/db'
+import openaiUsage from './middleware/openaiUsage'
 import exampleRoutes from './routes/example'
 import alertsRoutes from './routes/alerts'
 import sessionsRoutes from './routes/sessions'
@@ -13,6 +15,7 @@ dotenv.config()
 
 export function createApp() {
   const app = express()
+  app.use(openaiUsage(pool))
   app.use(exampleRoutes)
   app.use(alertsRoutes)
   app.use(sessionsRoutes)
