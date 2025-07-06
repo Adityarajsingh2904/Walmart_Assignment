@@ -37,6 +37,10 @@ jobs:
           pnpm install --frozen-lockfile
       - name: Run tests
         run: pnpm --filter api-gateway test -- --coverage.reporter=json-summary
+      - name: Run integration tests (end-to-end)
+        run: |
+          docker compose -f docker-compose.override.yml up -d --build ledger-service iam
+          pnpm vitest run --coverage --testPathPattern tests/integration
       - name: Fail if coverage < 80 %
         run: |
           pct=$(jq '.total.lines.pct' api-gateway/coverage/coverage-summary.json)
