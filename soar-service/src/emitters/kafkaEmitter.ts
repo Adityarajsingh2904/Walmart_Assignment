@@ -19,7 +19,7 @@ const logger = pino({ level: 'debug' });
 
 const kafka = new Kafka({
   clientId: env.KAFKA_CLIENT_ID,
-  brokers: env.KAFKA_BROKERS.split(',')
+  brokers: env.BROKER_URL.split(',')
 });
 
 const producer = kafka.producer({
