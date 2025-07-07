@@ -1,7 +1,45 @@
-# Walmart Assignment
+---
+title: "TrustVault Project Overview"
+sidebar_position: 1
+---
+# TrustVault
 
 This repository contains multiple microservices and tooling used to explore security automation workflows.
 
+## Production Endpoints
+
+- **UI**: https://app.trustvault.io
+- **API**: https://api.trustvault.io ([API Docs](/docs/api))
+
+## Terraform Variable Guide
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| aws_region | | AWS region |
+| openai_key | | OpenAI API key |
+| db_username | | Database master username |
+| db_password | | Database master password |
+| ec2_role_name | | IAM role attached to the EC2 instance |
+| vpc_id | | VPC ID where RDS will reside |
+| subnet_ids | | Subnets for the RDS subnet group |
+| allowed_cidr | "0.0.0.0/0" | CIDR allowed to access PostgreSQL |
+| project_tag | "trustvault" | Tag applied to resources |
+| domain_name | | Domain name for the website |
+| certificate_arn | | ACM certificate ARN in us-east-1 |
+| create_route53 | false | Create Route53 alias record |
+| route53_zone_id | null | Route53 hosted zone ID |
+| instance_id | | Existing EC2 instance ID |
+| alert_email | | Email for SNS subscription |
+
+## Secrets Setup
+
+1. Ensure the following secrets exist in AWS Secrets Manager:
+   - `arn:aws:secretsmanager:us-east-1:123456789012:secret:trustvault/openai/api_key`
+   - `arn:aws:secretsmanager:us-east-1:123456789012:secret:trustvault/postgres/username`
+   - `arn:aws:secretsmanager:us-east-1:123456789012:secret:trustvault/postgres/password`
+2. Copy `.env.example` to `.env` and fill in local values.
+
+GitHub Actions logs: <https://github.com/YourOrg/TrustVault/actions>
 ## Installation
 
 1. Install [pnpm](https://pnpm.io) and Node.js 20 or later.
