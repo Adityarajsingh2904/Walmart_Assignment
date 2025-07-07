@@ -82,3 +82,14 @@ variable "alert_email" {
   description = "Email for SNS subscription"
   type        = string
 }
+
+variable "rds_host" {
+  description = "RDS endpoint hostname"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+  default     = "postgres"
+}
