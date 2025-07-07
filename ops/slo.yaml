@@ -1,0 +1,78 @@
+# ---
+# title: "TrustVault SLOs"
+# sidebar_position: 5
+# ---
+
+apiVersion: openslo/v1
+kind: Service
+metadata:
+  name: trustvault
+  displayName: TrustVault API
+spec:
+  owner: platform-team
+  product: trustvault
+  links:
+    - name: Grafana Dashboard
+      url: https://grafana.example.com/d/trustvault-main
+
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: latency-slo
+  displayName: Alerts & Anomaly latency
+spec:
+  service: trustvault
+  description: p99 latency for /alerts and /anomaly endpoints must be < 200ms
+  indicator:
+    thresholdMetric:
+      metricSource:
+        type: Prometheus
+        spec:
+          query: |
+            histogram_quantile(
+              0.99,
+              sum(rate(api_gateway_latency_ms_bucket{route=~"/(alerts|anomaly)"}[5m])) by (le)
+            )
+  objective:
+    op: lt
+    value: 200
+    target: 0.999
+  timeWindow:
+    duration: 30d
+    isRolling: true
+  budgetingMethod: Occurrences
+  alertPolicies:
+    - latency-alert
+
+---
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: error-rate-slo
+  displayName: Alerts & Anomaly error rate
+spec:
+  service: trustvault
+  description: Error rate for /alerts and /anomaly endpoints must stay below 0.5%.
+  indicator:
+    ratioMetric:
+      good:
+        metricSource:
+          type: Prometheus
+          spec:
+            query: |
+              sum(rate(api_gateway_requests_total{route=~"/(alerts|anomaly)",status=~"2.."}[5m]))
+      total:
+        metricSource:
+          type: Prometheus
+          spec:
+            query: |
+              sum(rate(api_gateway_requests_total{route=~"/(alerts|anomaly)"}[5m]))
+  objective:
+    target: 0.995
+  timeWindow:
+    duration: 30d
+    isRolling: true
+  budgetingMethod: Occurrences
+  alertPolicies:
+    - error-rate-alert
