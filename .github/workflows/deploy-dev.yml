@@ -1,0 +1,87 @@
+name: Deploy Dev
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+  setup-aws:
+    runs-on: ubuntu-latest
+    needs: checkout
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+  terraform-init-plan:
+    runs-on: ubuntu-latest
+    needs: setup-aws
+    steps:
+      - uses: actions/checkout@v4
+      - name: Terraform Init
+        run: |
+          cd deployment/terraform/dev
+          terraform init -backend-config=${{ secrets.TF_BACKEND_CONFIG }}
+      - name: Terraform Plan
+        run: |
+          cd deployment/terraform/dev
+          terraform plan
+
+  terraform-apply:
+    runs-on: ubuntu-latest
+    needs: terraform-init-plan
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply Terraform
+        run: |
+          cd deployment/terraform/dev
+          terraform apply -auto-approve
+
+  docker-build-push:
+    runs-on: ubuntu-latest
+    needs: terraform-apply
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -t trustvault-api:dev ./api
+      - name: Build UI image
+        run: docker build -t trustvault-ui:dev ./ui
+      - name: Login to ECR
+        run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+      - name: Push images
+        run: |
+          docker push ${{ secrets.ECR_REGISTRY }}/trustvault-api:dev
+          docker push ${{ secrets.ECR_REGISTRY }}/trustvault-ui:dev
+
+  deploy-to-k8s:
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    steps:
+      - uses: actions/checkout@v4
+      - name: Helm upgrade
+        run: helm upgrade trustvault chart/ --namespace dev --install --wait --set image.tag=dev
+
+  health-check:
+    runs-on: ubuntu-latest
+    needs: deploy-to-k8s
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for rollout
+        run: kubectl rollout status deployment/trustvault -n dev
+      - name: Run probe
+        run: ./scripts/probe.sh dev
+      - name: Rollback on failure
+        if: failure()
+        run: helm rollback trustvault --namespace dev
+
