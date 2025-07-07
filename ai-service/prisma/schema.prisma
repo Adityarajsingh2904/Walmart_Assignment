@@ -1,0 +1,9 @@
+model Feedback {
+  id        String   @id @default(uuid())
+  alertId   String   @db.Uuid
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@index([alertId])
+  @@foreignKey([alertId], references: [id], on: Alert)
+}
